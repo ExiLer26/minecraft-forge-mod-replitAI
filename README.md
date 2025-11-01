@@ -13,3 +13,5 @@
 
 #/menu add oluşturduğunuz menuye item ekleyip komut ataya bilirsiniz.
 /menu add isim item isim komut
+
+test
