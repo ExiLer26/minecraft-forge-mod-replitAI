@@ -1,0 +1,65 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "https://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+    }
+}
+
+apply plugin: "net.minecraftforge.gradle.forge"
+
+version = modVersion
+group = modGroup
+archivesBaseName = modBaseName
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    // 1.12.2 Forge sürümünü kullan ama eski API ile uyumlu olacak şekilde kod yaz
+    version = "1.12.2-14.23.5.2768"
+    runDir = "run"
+    mappings = "stable_39"
+
+    // Ek bilgi (opsiyonel)
+    // Bu satırı eklersen mod .jar içinde sürüm bilgilerini gömer
+    makeObfSourceJar = false
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Buraya modun başka bir mod veya kütüphane gerektiriyorsa ekleyebilirsin
+}
+
+processResources {
+    // Versiyon değişince dosyayı yeniden işle
+    inputs.property "version", project.version
+    // Burada mcversion alanını sabitleme → sadece 1.12 aralığını belirt
+    inputs.property "mcversion", "1.12"
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+        expand "version": project.version, "mcversion": "1.12"
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    appendix = 'deobf'
+}
+
+artifacts {
+    archives deobfJar
+}
