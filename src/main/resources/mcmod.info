@@ -1,0 +1,15 @@
+
+[
+{
+  "modid": "custommenu",
+  "name": "Custom Menu Mod",
+  "description": "Özelleştirilebilir menu sistemi",
+  "version": "1.0",
+  "mcversion": "1.12.2",
+  "authorList": ["CustomMenu"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
