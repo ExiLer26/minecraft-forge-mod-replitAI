@@ -1,0 +1,62 @@
+
+plugins {
+    id 'net.minecraftforge.gradle' version '5.1.+' apply false
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+version = "2.0.0"
+group = "com.buildwand"
+archivesBaseName = "buildwand-1.17"
+
+sourceCompatibility = targetCompatibility = '16'
+compileJava {
+    sourceCompatibility = targetCompatibility = '16'
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.17.1'
+    
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                buildwand {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                buildwand {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    maven { url = 'https://maven.minecraftforge.net/' }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.109'
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    
+    inputs.property "version", project.version
+    inputs.property "mcversion", "1.17.1"
+
+    filesMatching('META-INF/mods.toml') {
+        expand 'version':project.version
+    }
+}
