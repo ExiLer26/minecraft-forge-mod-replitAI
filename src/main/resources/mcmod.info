@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "buildwand",
+    "name": "Build Wand",
+    "description": "Oyuncuların bir alanı seçip, otomatik olarak belirtilen malzemelerle doldurmasına olanak tanıyan bir mod",
+    "version": "${version}",
+    "mcversion": "[1.12,1.12.2]",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["LorNople"],
+    "credits": "Replit-AI",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
