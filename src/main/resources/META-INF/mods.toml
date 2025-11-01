@@ -1,0 +1,29 @@
+
+modLoader="javafml"
+loaderVersion="[32,37)"
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/example/buildwand/issues"
+
+[[mods]]
+modId="buildwand"
+version="${version}"
+displayName="Build Wand"
+authors="LorNople"
+credits="Replit-AI"
+description='''
+A build wand mod for Minecraft 1.16.1-1.16.5
+'''
+
+[[dependencies.buildwand]]
+    modId="forge"
+    mandatory=true
+    versionRange="[32,37)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildwand]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.1,1.17)"
+    ordering="NONE"
+    side="BOTH"
