@@ -8,7 +8,11 @@
 /pv 1-100 arası sanal chest.
 
 [server perm]
-• virtualchest.command.pv - Temel komut izni
-• virtualchest.command.reload - Reload komutu izni
-• virtualchest.chest.all - Tüm sandıklara erişim izni
-• virtualchest.chest.1, virtualchest.chest.2, vb. - Belirli sandıklara erişim izni
+# Temel komut izni.
+◇ virtualchest.command.pv
+# Reload komut izni.
+◇ virtualchest.command.reload
+# Tüm sandıklara erişim izni.
+◇ virtualchest.chest.all
+# Belirli sandıklara erişim izni.
+◇ virtualchest.chest.1

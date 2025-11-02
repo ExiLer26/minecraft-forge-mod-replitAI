@@ -1,0 +1,16 @@
+[
+{
+  "modid": "virtualchest",
+  "name": "Virtual Chest",
+  "description": "A mod that provides virtual chests accessible via commands",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Developer"],
+  "credits": "Virtual Chest Mod for Minecraft Forge",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
