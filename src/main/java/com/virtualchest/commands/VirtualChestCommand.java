@@ -38,7 +38,12 @@ public class VirtualChestCommand extends CommandBase {
 
     @Override
     public int getRequiredPermissionLevel() {
-        return 0; // Anyone can use the basic command
+        return -1; // No permission required at all
+    }
+    
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true; // Always allow execution
     }
 
     @Override
@@ -198,12 +203,7 @@ public class VirtualChestCommand extends CommandBase {
      * @return True if the player has permission
      */
     private boolean checkPermission(EntityPlayer player, int chestNumber) {
-        // OP players can access all chests
-        if (player.canUseCommand(2, "pv.admin")) {
-            return true;
-        }
-
-        // Basic permission check - all players can access their own chests
+        // All players can access their own chests
         return true;
     }
 
