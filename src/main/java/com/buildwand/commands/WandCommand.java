@@ -36,9 +36,14 @@ public class WandCommand extends CommandBase {
 
     @Override
     public int getRequiredPermissionLevel() {
-        return 0; // Anyone can use this command
+        return -1; // Anyone can use this command
     }
 
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true; // Always allow execution
+    }
+    
     private void executeUndo(EntityPlayer player) {
         // Try to undo the last build first
         if (BuildWandPlugin.getInstance().getBuildManager().undoLastBuild(player)) {
