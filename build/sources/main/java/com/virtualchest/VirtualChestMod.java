@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = VirtualChestMod.MODID, name = VirtualChestMod.NAME, version = VirtualChestMod.VERSION)
+@Mod(modid = VirtualChestMod.MODID, name = VirtualChestMod.NAME, version = VirtualChestMod.VERSION, acceptedMinecraftVersions = "[1.12,1.13)")
 public class VirtualChestMod {
     public static final String MODID = "virtualchest";
     public static final String NAME = "Virtual Chest";
