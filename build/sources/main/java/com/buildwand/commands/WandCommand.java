@@ -36,9 +36,14 @@ public class WandCommand extends CommandBase {
 
     @Override
     public int getRequiredPermissionLevel() {
-        return 0; // Anyone can use this command
+        return -1; // Anyone can use this command
     }
 
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+        return true; // Always allow execution
+    }
+    
     private void executeUndo(EntityPlayer player) {
         // Try to undo the last build first
         if (BuildWandPlugin.getInstance().getBuildManager().undoLastBuild(player)) {
@@ -185,8 +190,13 @@ public class WandCommand extends CommandBase {
                                       TextFormatting.GREEN + " blocks."));
             
             player.sendMessage(new TextComponentString(
-                TextFormatting.GREEN + "Yapı malzemesini belirtmek için sohbete bir malzeme ve miktar yazın " + 
-                TextFormatting.YELLOW + "(e.g., 'cobblestone 100 veya planks:2 100')"
+                TextFormatting.GREEN + "Yapı malzemesini belirtmek için sohbete malzeme ve miktar yazın"
+            ));
+            player.sendMessage(new TextComponentString(
+                TextFormatting.YELLOW + "Tek malzeme: " + TextFormatting.WHITE + "'cobblestone 100' veya 'planks:2 100'"
+            ));
+            player.sendMessage(new TextComponentString(
+                TextFormatting.YELLOW + "Çoklu malzeme: " + TextFormatting.WHITE + "'planks 5, planks:3 10, cobblestone 20'"
             ));
             BuildWandPlugin.getInstance().getBuildManager().setAwaitingMaterialInput(player.getUniqueID(), true);
         } else {

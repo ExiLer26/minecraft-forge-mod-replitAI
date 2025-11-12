@@ -86,8 +86,13 @@ public class SelectionListener {
             ));
             
             player.sendMessage(new TextComponentString(
-                TextFormatting.GREEN + "Yapı malzemesini belirtmek için sohbete bir malzeme ve miktar yazın " + 
-                TextFormatting.YELLOW + "(e.g., 'cobblestone 100' or 'planks:1 100')"
+                TextFormatting.GREEN + "Yapı malzemesini belirtmek için sohbete malzeme ve miktar yazın"
+            ));
+            player.sendMessage(new TextComponentString(
+                TextFormatting.YELLOW + "Tek malzeme: " + TextFormatting.WHITE + "'cobblestone 100' veya 'planks:1 100'"
+            ));
+            player.sendMessage(new TextComponentString(
+                TextFormatting.YELLOW + "Çoklu malzeme: " + TextFormatting.WHITE + "'planks 5, planks:3 10, cobblestone 20'"
             ));
             
             BuildWandPlugin.getInstance().getBuildManager().setAwaitingMaterialInput(player.getUniqueID(), true);

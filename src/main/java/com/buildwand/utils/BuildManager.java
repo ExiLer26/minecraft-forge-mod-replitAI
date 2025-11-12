@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 public class BuildManager {
     private final Map<UUID, Boolean> awaitingMaterialInput = new HashMap<>();
     private static final Pattern MATERIAL_PATTERN = Pattern.compile("([a-zA-Z_:]+)(?::(\\d+))?\\s+(\\d+)");
+    private static final Pattern MULTI_MATERIAL_PATTERN = Pattern.compile("([a-zA-Z_:]+)(?::(\\d+))?\\s+(\\d+)(?:\\s*,\\s*|$)");
     
     // Structure to store block changes for undo functionality
     private static class BlockChange {
@@ -564,22 +565,142 @@ public class BuildManager {
         if (awaitingMaterialInput.getOrDefault(playerUUID, false)) {
             String message = event.getMessage();
             
-            // Parse the message for material and quantity
-            Matcher matcher = MATERIAL_PATTERN.matcher(message);
-            if (matcher.matches()) {
-                event.setCanceled(true); // Cancel the chat message
-                awaitingMaterialInput.put(playerUUID, false); // Reset awaiting state
-                
-                String materialName = matcher.group(1);
-                String metadataStr = matcher.group(2);
-                int metadata = (metadataStr != null) ? Integer.parseInt(metadataStr) : 0;
-                int quantity = Integer.parseInt(matcher.group(3));
-                
-                handleMaterialSpecification(player, materialName, metadata, quantity);
+            // Check if this is a multi-material input (contains comma)
+            if (message.contains(",")) {
+                event.setCanceled(true);
+                awaitingMaterialInput.put(playerUUID, false);
+                handleMultiMaterialSpecification(player, message);
+            } else {
+                // Parse the message for single material and quantity
+                Matcher matcher = MATERIAL_PATTERN.matcher(message);
+                if (matcher.matches()) {
+                    event.setCanceled(true); // Cancel the chat message
+                    awaitingMaterialInput.put(playerUUID, false); // Reset awaiting state
+                    
+                    String materialName = matcher.group(1);
+                    String metadataStr = matcher.group(2);
+                    int metadata = (metadataStr != null) ? Integer.parseInt(metadataStr) : 0;
+                    int quantity = Integer.parseInt(matcher.group(3));
+                    
+                    handleMaterialSpecification(player, materialName, metadata, quantity);
+                }
             }
         }
     }
 
+    private void handleMultiMaterialSpecification(EntityPlayer player, String input) {
+        // Parse multiple materials: "planks 5, planks:3 10, cobblestone 20"
+        List<MaterialSpec> materials = new ArrayList<>();
+        
+        Matcher matcher = MULTI_MATERIAL_PATTERN.matcher(input);
+        while (matcher.find()) {
+            String materialName = matcher.group(1);
+            String metadataStr = matcher.group(2);
+            int metadata = (metadataStr != null) ? Integer.parseInt(metadataStr) : 0;
+            int quantity = Integer.parseInt(matcher.group(3));
+            
+            materials.add(new MaterialSpec(materialName, metadata, quantity));
+        }
+        
+        if (materials.isEmpty()) {
+            player.sendMessage(new TextComponentString(TextFormatting.RED + "Geçersiz format! Örnek: planks 5, planks:3 10, cobblestone 20"));
+            return;
+        }
+        
+        // Get the player's selection
+        AreaSelection selection = BuildWandPlugin.getInstance().getPlayerSelections().get(player.getUniqueID());
+        
+        if (selection == null || !selection.isComplete()) {
+            player.sendMessage(new TextComponentString(TextFormatting.RED + "Tam bir seçiminiz yok."));
+            return;
+        }
+        
+        // Validate and prepare all materials
+        List<MaterialData> validatedMaterials = new ArrayList<>();
+        int totalQuantity = 0;
+        
+        for (MaterialSpec spec : materials) {
+            String materialName = spec.materialName.toLowerCase();
+            if (!materialName.contains(":")) {
+                materialName = "minecraft:" + materialName;
+            }
+            
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(materialName));
+            if (block == null) {
+                player.sendMessage(new TextComponentString(TextFormatting.RED + "Bilinmeyen malzeme: " + spec.materialName));
+                return;
+            }
+            
+            IBlockState blockState;
+            try {
+                blockState = block.getStateFromMeta(spec.metadata);
+            } catch (Exception e) {
+                player.sendMessage(new TextComponentString(TextFormatting.RED + "Geçersiz meta veri: " + spec.metadata + " blok için: " + materialName));
+                return;
+            }
+            
+            Item item = Item.getItemFromBlock(block);
+            if (item == null) {
+                player.sendMessage(new TextComponentString(TextFormatting.RED + "Blok için karşılık gelen öğe bulunamadı: " + materialName));
+                return;
+            }
+            
+            int playerHasAmount = countPlayerItems(player, item, spec.metadata);
+            if (playerHasAmount < spec.quantity) {
+                String fullName = spec.metadata > 0 ? materialName + ":" + spec.metadata : materialName;
+                player.sendMessage(new TextComponentString(TextFormatting.RED + "Yeterince sahip değilsin " + 
+                    TextFormatting.GOLD + fullName + 
+                    TextFormatting.RED + ". İhtiyaç " + 
+                    TextFormatting.YELLOW + spec.quantity + 
+                    TextFormatting.RED + " ama sadece sahip olduğun " + 
+                    TextFormatting.YELLOW + playerHasAmount));
+                return;
+            }
+            
+            validatedMaterials.add(new MaterialData(blockState, item, spec.metadata, spec.quantity));
+            totalQuantity += spec.quantity;
+        }
+        
+        int blocksInArea = selection.getBlockCount();
+        if (totalQuantity < blocksInArea) {
+            player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "Uyarı: Toplam " + 
+                TextFormatting.GOLD + totalQuantity + 
+                TextFormatting.YELLOW + " blok belirttiniz ama alan " + 
+                TextFormatting.GOLD + blocksInArea + 
+                TextFormatting.YELLOW + " blok içeriyor."));
+        }
+        
+        // Build with multiple materials
+        buildAreaMultiMaterial(player, selection, validatedMaterials);
+    }
+    
+    // Helper classes for multi-material handling
+    private static class MaterialSpec {
+        String materialName;
+        int metadata;
+        int quantity;
+        
+        MaterialSpec(String materialName, int metadata, int quantity) {
+            this.materialName = materialName;
+            this.metadata = metadata;
+            this.quantity = quantity;
+        }
+    }
+    
+    private static class MaterialData {
+        IBlockState blockState;
+        Item item;
+        int metadata;
+        int quantity;
+        
+        MaterialData(IBlockState blockState, Item item, int metadata, int quantity) {
+            this.blockState = blockState;
+            this.item = item;
+            this.metadata = metadata;
+            this.quantity = quantity;
+        }
+    }
+    
     private void handleMaterialSpecification(EntityPlayer player, String materialName, int metadata, int quantity) {
         // Normalize material name to lowercase and add minecraft: prefix if not present
         materialName = materialName.toLowerCase();
@@ -746,6 +867,85 @@ public class BuildManager {
         }
     }
 
+    private void buildAreaMultiMaterial(EntityPlayer player, AreaSelection selection, List<MaterialData> materials) {
+        World world = selection.getWorld();
+        
+        int blocksPlaced = 0;
+        List<BlockChange> changes = new ArrayList<>();
+        List<ItemStack> usedStacks = new ArrayList<>();
+        
+        // Calculate total blocks to place
+        int totalAvailable = 0;
+        for (MaterialData mat : materials) {
+            totalAvailable += mat.quantity;
+        }
+        
+        // Remove materials from inventory first
+        for (MaterialData mat : materials) {
+            removeItemTypeFromInventory(player, mat.item, mat.metadata, mat.quantity);
+            usedStacks.add(new ItemStack(mat.item, mat.quantity, mat.metadata));
+        }
+        
+        // Create an iterator for materials
+        int currentMaterialIndex = 0;
+        int remainingFromCurrent = materials.get(0).quantity;
+        
+        // Place blocks in order, using materials sequentially
+        for (int x = selection.getMinX(); x <= selection.getMaxX() && blocksPlaced < totalAvailable; x++) {
+            for (int y = selection.getMinY(); y <= selection.getMaxY() && blocksPlaced < totalAvailable; y++) {
+                for (int z = selection.getMinZ(); z <= selection.getMaxZ() && blocksPlaced < totalAvailable; z++) {
+                    BlockPos pos = new BlockPos(x, y, z);
+                    
+                    // Skip non-air blocks
+                    if (world.getBlockState(pos).getBlock() != Blocks.AIR) {
+                        continue;
+                    }
+                    
+                    // Get current material
+                    if (remainingFromCurrent <= 0) {
+                        currentMaterialIndex++;
+                        if (currentMaterialIndex >= materials.size()) {
+                            break;
+                        }
+                        remainingFromCurrent = materials.get(currentMaterialIndex).quantity;
+                    }
+                    
+                    MaterialData currentMaterial = materials.get(currentMaterialIndex);
+                    
+                    // Store original state for undo
+                    IBlockState originalState = world.getBlockState(pos);
+                    changes.add(new BlockChange(pos, world, originalState));
+                    
+                    // Place the block
+                    world.setBlockState(pos, currentMaterial.blockState, 3);
+                    blocksPlaced++;
+                    remainingFromCurrent--;
+                }
+            }
+        }
+        
+        // Store build info for undo
+        if (blocksPlaced > 0) {
+            BuildInfo buildInfo = new BuildInfo(changes, null, 0, 0);
+            buildInfo.usedItemStacks = usedStacks;
+            lastBuilds.put(player.getUniqueID(), buildInfo);
+            
+            player.sendMessage(new TextComponentString(
+                TextFormatting.GREEN + "Başarıyla " + 
+                TextFormatting.YELLOW + blocksPlaced + 
+                TextFormatting.GREEN + " blok yerleştirildi " +
+                TextFormatting.YELLOW + materials.size() + 
+                TextFormatting.GREEN + " farklı malzemeden."));
+            
+            player.sendMessage(new TextComponentString(
+                TextFormatting.GRAY + "Tip " +
+                TextFormatting.YELLOW + "/wand undo" +
+                TextFormatting.GRAY + " bu yapıyı geri almak için."));
+        } else {
+            player.sendMessage(new TextComponentString(TextFormatting.YELLOW + "Hiçbir blok yerleştirilmedi."));
+        }
+    }
+    
     // This method is now redundant since we already have removeItemTypeFromInventory
     // Keep it for backward compatibility if needed
     private void removeItemsFromInventory(EntityPlayer player, String blockTypeId, int amount) {
