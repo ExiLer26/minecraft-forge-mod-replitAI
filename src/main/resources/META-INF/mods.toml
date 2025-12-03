@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[29,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="buildwand"
+version="${version}"
+displayName="Build Wand"
+description='''
+A build wand mod for Minecraft 1.15
+'''
+
+[[dependencies.buildwand]]
+    modId="forge"
+    mandatory=true
+    versionRange="[29,32,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.buildwand]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15,1.15.3)"
+    ordering="NONE"
+    side="BOTH"
