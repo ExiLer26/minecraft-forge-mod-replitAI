@@ -1,5 +1,11 @@
-● Bu Proje Replit AI Tarafından Geliştirildi.
+# Wireless Utilities
+[![Build Status](https://jenkins.lord.moe/job/Wireless%20Utilities/badge/icon)](https://jenkins.lord.moe/job/Wireless%20Utilities/) [![](https://cf.way2muchnoise.eu/full_wireless-utilities_downloads.svg)](http://minecraft.curseforge.com/projects/wireless-utilities)
+### _Because wires just get in the way_
 
-□ minecraft mod 1.12.2 ve 1.20.1' e kadar
+![](https://i.imgur.com/tkn7sMn.png)
 
-○ ./gradlew build komutu
+## Credits
+
+[Team CoFH](http://teamcofh.com/): Making CoFH Core, which WU depends on.
+
+[Konstantin](https://github.com/kellixon): Russian Language Support

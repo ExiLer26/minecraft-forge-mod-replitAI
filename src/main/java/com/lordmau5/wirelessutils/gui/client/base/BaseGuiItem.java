@@ -1,0 +1,52 @@
+package com.lordmau5.wirelessutils.gui.client.base;
+
+import cofh.core.gui.element.tab.TabBase;
+import cofh.core.util.helpers.StringHelper;
+import com.lordmau5.wirelessutils.WirelessUtils;
+import com.lordmau5.wirelessutils.gui.container.BaseContainerItem;
+import net.minecraft.util.ResourceLocation;
+
+public class BaseGuiItem extends BaseGuiContainer {
+
+    public static final ResourceLocation TEXTURE = new ResourceLocation(WirelessUtils.MODID, "textures/gui/player_card.png");
+
+    protected boolean drawName = true;
+    protected boolean drawOwnInventory = true;
+
+    public BaseGuiItem(BaseContainerItem container, ResourceLocation texture) {
+        super(container, texture);
+
+        xSize = 198;
+        drawTitle = false;
+        drawInventory = false;
+    }
+
+    public BaseGuiItem(BaseContainerItem container) {
+        super(container, TEXTURE);
+
+        xSize = 198;
+        drawTitle = false;
+        drawInventory = false;
+    }
+
+    @Override
+    public int getTabXOffset(int side) {
+        if ( side == TabBase.LEFT )
+            return 22;
+
+        return super.getTabXOffset(side);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int x, int y) {
+        super.drawGuiContainerForegroundLayer(x, y);
+
+        if ( drawName && name != null ) {
+            String localized = StringHelper.localize(name);
+            fontRenderer.drawString(localized, getCenteredOffset(localized, (xSize - 22) / 2 + 22), 6, textColor);
+        }
+
+        if ( drawOwnInventory )
+            fontRenderer.drawString(StringHelper.localize("container.inventory"), 30, ySize - 96 + 3, textColor);
+    }
+}
