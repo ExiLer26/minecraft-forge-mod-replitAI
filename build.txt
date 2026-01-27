@@ -1,0 +1,57 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/8.1.1/userguide/gradle_daemon.html#sec:disabling_the_daemon.
+Daemon will be stopped at the end of the build 
+Configuration on demand is an incubating feature.
+> Task :extractForgeUserdev SKIPPED
+> Task :extractMcpData SKIPPED
+> Task :extractDependencyATs UP-TO-DATE
+> Task :generateForgeSrgMappings SKIPPED
+> Task :downloadLauncherAllVersionsManifest SKIPPED
+> Task :downloadLauncherVersionManifest SKIPPED
+> Task :downloadVanillaJars SKIPPED
+> Task :mergeVanillaSidedJars SKIPPED
+> Task :deobfuscateMergedJarToSrg SKIPPED
+> Task :downloadFernflower SKIPPED
+> Task :decompileSrgJar SKIPPED
+> Task :cleanupDecompSrgJar SKIPPED
+> Task :patchDecompiledJar SKIPPED
+> Task :remapDecompiledJar SKIPPED
+> Task :decompressDecompiledSources UP-TO-DATE
+> Task :compilePatchedMcJava UP-TO-DATE
+> Task :processPatchedMcResources UP-TO-DATE
+> Task :patchedMcClasses UP-TO-DATE
+> Task :compileApiJava NO-SOURCE
+> Task :processApiResources NO-SOURCE
+> Task :apiClasses UP-TO-DATE
+> Task :injectTags UP-TO-DATE
+> Task :compileInjectedTagsJava UP-TO-DATE
+> Task :extractNatives2 UP-TO-DATE
+> Task :createMcLauncherFiles UP-TO-DATE
+> Task :compileMcLauncherJava UP-TO-DATE
+> Task :processInjectedTagsResources NO-SOURCE
+> Task :injectedTagsClasses UP-TO-DATE
+> Task :processMcLauncherResources NO-SOURCE
+> Task :mcLauncherClasses UP-TO-DATE
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :packageMcLauncher
+> Task :packagePatchedMc
+> Task :reobfJar
+> Task :sourcesJar
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+
+BUILD SUCCESSFUL in 34s
+16 actionable tasks: 7 executed, 9 up-to-date

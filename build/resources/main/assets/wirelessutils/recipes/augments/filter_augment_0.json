@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"group": "wirelessutils",
+	"pattern": [
+		" V ",
+		"VAV",
+		" P "
+	],
+	"key": {
+		"P": {
+			"item": "#STICKY_PISTON"
+		},
+		"V": {
+			"item": "#PAPER"
+		},
+		"A": {
+			"item": "wirelessutils:base_augment"
+		}
+	},
+	"result": {
+		"item": "wirelessutils:filter_augment",
+		"data": 0,
+		"count": 1
+	}
+}

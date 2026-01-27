@@ -91,10 +91,29 @@ repositories {
     maven {
         name 'CurseMaven'
         url 'https://cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
     }
     maven {
         name = "CoFH Maven"
         url = "https://maven.covers1624.net"
+    }
+    maven {
+        name = "mcjty"
+        url = "https://maven.k-4u.nl"
+    }
+    maven {
+        name = "tterrag Maven"
+        url = "https://maven.tterrag.com/"
+    }
+    maven {
+        name = "CraftTweaker Maven"
+        url = "https://maven.blamejared.com/"
+    }
+    maven {
+        name = "OpenComputers"
+        url = "https://maven.cil.li/"
     }
     mavenLocal()
 }
@@ -107,17 +126,19 @@ dependencies {
         implementation 'zone.rong:mixinbooter:7.1'
     }
 
-    // Local jars from libs folder
-    implementation name: 'RedstoneFlux-1.12-2.1.0.6-universal'
-    implementation name: 'CoFHCore-1.12.2-4.6.6.1-universal'
-    implementation name: 'morerefinedstorage-1.2.02'
-    implementation name: 'appliedenergistics2-rv6-stable-7'
-    implementation name: 'mcjtylib-1.12-3.0.5'
-    implementation name: 'theoneprobe-1.12-1.4.23'
-    implementation name: 'CraftTweaker2-1.12-4.1.20.711'
-    implementation name: 'jei_1.12.2-4.13.1.225'
-    implementation name: 'Hwyla-1.8.26-B41_1.12.2'
-    implementation name: 'CodeChickenLib-1.12.2-3.2.2.353-universal'
+    // Local libs folder dependencies
+    implementation files('libs/RedstoneFlux-1.12-2.1.0.6-universal.jar')
+    implementation files('libs/CoFHCore-1.12.2-4.6.6.1-universal.jar')
+    implementation files('libs/appliedenergistics2-rv6-stable-7.jar')
+    implementation files('libs/mcjtylib-1.12-3.0.5.jar')
+    implementation files('libs/theoneprobe-1.12-1.4.23.jar')
+    implementation files('libs/jei_1.12.2-4.13.1.225.jar')
+    implementation files('libs/CodeChickenLib-1.12.2-3.2.2.353-universal.jar')
+    implementation files('libs/morerefinedstorage-1.2.02.jar')
+    implementation files('libs/Hwyla-1.8.26-B41_1.12.2.jar')
+    implementation files('libs/CraftTweaker2-1.12-4.1.20.711.jar')
+    implementation files('libs/refinedstorage-1.6.16.jar')
+
 
     if (project.use_mixins.toBoolean()) {
         String mixin = modUtils.enableMixins('org.spongepowered:mixin:0.8.3', "mixins.${project.archives_base_name}.refmap.json")
@@ -131,6 +152,7 @@ dependencies {
             transitive = false
         }
     }
+
 }
 
 // Adds Access Transformer files to tasks
@@ -215,19 +237,4 @@ idea {
 
 tasks.named("processIdeaSettings").configure {
     dependsOn("injectTags")
-}
-
-
-tasks.withType(JavaCompile) {
-    options.fork = true
-    options.forkOptions.memoryMaximumSize = "3G"
-}
-
-tasks.withType(Test) {
-    enabled = false
-}
-
-jar {
-    archiveClassifier = ''
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
